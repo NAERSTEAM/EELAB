@@ -1,8 +1,6 @@
 //Project RPSRobot 20200401_0
 //================
-//Apr 2 2020 T.I. Added countdown, randomgesture, score rules
 //Apr 1 2020 T.I. created this file
-
 
 #include <Servo.h>
 
