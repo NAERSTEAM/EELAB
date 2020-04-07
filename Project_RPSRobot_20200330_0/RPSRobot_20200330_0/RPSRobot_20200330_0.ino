@@ -1,5 +1,6 @@
 //Project RPSRobot 20200401_0
 //================
+//Apr 7 2020 T.I. Added Win/Lose LED, SegdDisplay driver,Integration Test
 //Apr 2 2020 T.I. Added countdown, randomgesture, score rules
 //Apr 1 2020 T.I. created this file
 
@@ -42,8 +43,18 @@ int GestureDgree[NUMBER_OF_GESTURE][NUMBER_OF_FINGER];
 int matchScore[NUMBER_OF_GESTURE][NUMBER_OF_GESTURE]={{1,2,0},
                                                       {0,1,2},
                                                       {2,1,1}};
+int startButton=13;
+int pinLoseLED=7;
+int pinWinLED=A5;
+
 
 void setup() {
+
+
+    DDRD = B00000001;
+    pinMode(2, OUTPUT);
+    pinMode(3, OUTPUT);
+    pinMode(4, OUTPUT);
   // put your setup code here, to run once:
 
     Serial.setTimeout(50);
@@ -53,7 +64,13 @@ void setup() {
     servo_n[2].attach(11, ZEROPOSITION, ENDPOSITION);    
 
 
+    pinMode(startButton, INPUT);
     randomSeed(analogRead(A4));
+
+    pinMode(pinLoseLED, OUTPUT);
+    pinMode(pinWinLED, OUTPUT);
+
+
 }
 
 void loop() {
@@ -64,13 +81,20 @@ void loop() {
   int servoGesture;
   int userGesture;
   int matchResult=0;
+  int startButtonST=0;
 
 
-  
-
-  for(i=0;i<CONUNTDOWNSECS;i++)
+  do
   {
-      SevenSIG(CONUNTDOWNSECS-i);
+    startButtonST = digitalRead(startButton);
+  }while(0==startButtonST);
+
+  digitalWrite(pinWinLED,LOW);
+  digitalWrite(pinLoseLED,LOW);
+
+  for(i=CONUNTDOWNSECS;i>=0;i--)
+  {
+      SevenSEG(i);
 
       if(0!=i)
       {
@@ -85,8 +109,8 @@ void loop() {
 
   for(i=0;i<NUMBER_OF_FINGER;i++)
   {
-      Serial.print(servoGesture);
-      Serial.print("\n");
+ //     Serial.print(servoGesture);
+ //     Serial.print("\n");
       if(1==servo_nDIR[i])
       {
          servo_n[i].write(180-(int)servoDegree[i]);
@@ -106,7 +130,7 @@ void loop() {
   ADCVal[1]=analogRead(A1);
   ADCVal[2]=analogRead(A2);
 
-  for(i<0;i<NUMBER_OF_FINGER;i++)
+  for(i=0;i<NUMBER_OF_FINGER;i++)
   {
 
       ADCVal[i]=ADCVal[i]+ADCVal_Cli[i];
@@ -128,9 +152,37 @@ void loop() {
 
   matchResult=matchScore[userGesture][servoGesture];
 
-  
+
+  Serial.print("User:");
+  Serial.print(userGesture);
+  Serial.print("servoGesture:");
+  Serial.print(servoGesture);
+   Serial.print("\n");
+  switch(matchResult)
+  {
+    case 0:
+    {
+      digitalWrite(pinWinLED,LOW);
+      digitalWrite(pinLoseLED,HIGH);
+      Serial.print("UserLose");
+      Serial.print("\n");
+    }
+    break;
+    case 1:
+    {
+      
+    }
+    break;
+    case 2:
+    {
+      digitalWrite(pinWinLED,HIGH);
+      digitalWrite(pinLoseLED,LOW);
+      Serial.print("UserWin");
+      Serial.print("\n");
+    }
+    break;
+  }
  
-  delay(5000);
 
 }
 
@@ -138,9 +190,20 @@ void loop() {
 int gestureRecognize(int *pFingerADC)
 {
   int rt=0;
+
+  Serial.print("0:");
+  Serial.print(pFingerADC[0]);
+  Serial.print("\n");
+  Serial.print("1:");
+  Serial.print(pFingerADC[1]);
+  Serial.print("\n");
+  Serial.print("2:");
+  Serial.print(pFingerADC[2]);
+  Serial.print("\n");
+  
   if(240<pFingerADC[0])
   {
-    rt=SCISSORS_GES;
+    rt=ROCK_GES;
   }
   else if((211>pFingerADC[0])&&(211>pFingerADC[1])&&(211>pFingerADC[2]))
   {
@@ -183,7 +246,10 @@ void setMotorGesture(int gesture_number)
 
 
 //-1: disable
-void SevenSIG(int DECNumber)
+void SevenSEG(byte DECNumber)
 {
-
+  byte numberShift;
+  numberShift=PORTD&B11100011;
+  numberShift=numberShift|(DECNumber<<2);
+  PORTD=numberShift;
 }
