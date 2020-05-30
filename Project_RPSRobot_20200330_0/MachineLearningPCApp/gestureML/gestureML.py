@@ -1,11 +1,10 @@
+#May 17 2020 T.I. Removed unnecessary code
 #Apr 08 2020 T.I. for RSP robot project (Machine learning version)
 #Feb 11 2020 T.I. Modified for the IT textbook 04E78106
 #Feb 11 2020 T.I. created this file 
 
-import tensorflow as tf
-import keras as ks
+
 from tensorflow import keras
-import csv
 import numpy as np
 
 

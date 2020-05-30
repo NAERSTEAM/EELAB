@@ -1,5 +1,8 @@
 //Project RPSRobot Machine Learning version
 //================
+//May 18 2020 T.I. Modified for the Score Board
+//Apr 16 2020 T.I. Added buzzer function
+//                   Added Preparing moving
 //Apr 8 2020 T.I. Added ANN engine
 //Based on Project RPSRobot github "3d7a842"
 
@@ -45,6 +48,7 @@ int matchScore[NUMBER_OF_GESTURE][NUMBER_OF_GESTURE]={{1,2,0},
 int startButton=13;
 int pinLoseLED=7;
 int pinWinLED=A5;
+int pinBuzzer=12;
 
 float ANNinputs[3]={0.0,0.0,0.0};
 
@@ -160,7 +164,11 @@ void setup() {
 
     pinMode(pinLoseLED, OUTPUT);
     pinMode(pinWinLED, OUTPUT);
+    pinMode(pinBuzzer, OUTPUT);
 
+
+    digitalWrite(pinWinLED,LOW);
+    digitalWrite(pinLoseLED,LOW);
 
 }
 
@@ -179,8 +187,7 @@ void loop() {
     startButtonST = digitalRead(startButton);
   }while(0==startButtonST);
 
-  digitalWrite(pinWinLED,LOW);
-  digitalWrite(pinLoseLED,LOW);
+
 
   for(i=CONUNTDOWNSECS;i>=0;i--)
   {
@@ -188,6 +195,8 @@ void loop() {
 
       if(0!=i)
       {
+        setMotorGesture(i-1);
+        gestureAct();
         delay(1000);
       }
   }
@@ -195,26 +204,12 @@ void loop() {
 
   servoGesture = random(0,3);
   setMotorGesture(servoGesture);
+  gestureAct();
 
 
-  for(i=0;i<NUMBER_OF_FINGER;i++)
-  {
- //     Serial.print(servoGesture);
- //     Serial.print("\n");
-      if(1==servo_nDIR[i])
-      {
-         servo_n[i].write(180-(int)servoDegree[i]);
-      }
-      else
-      {
-         servo_n[i].write((int)servoDegree[i]);   
-      }    
-
-  
-  }
-
+  digitalWrite(pinBuzzer,HIGH);
   delay(500);
-
+  digitalWrite(pinBuzzer,LOW);
   
   ADCVal[0]=analogRead(A0);
   ADCVal[1]=analogRead(A1);
@@ -253,8 +248,11 @@ void loop() {
   {
     case 0:
     {
-      digitalWrite(pinWinLED,LOW);
+ 
       digitalWrite(pinLoseLED,HIGH);
+      delay(100);
+      digitalWrite(pinLoseLED,LOW);
+      delay(100);
       Serial.print("UserLose");
       Serial.print("\n");
     }
@@ -267,7 +265,9 @@ void loop() {
     case 2:
     {
       digitalWrite(pinWinLED,HIGH);
-      digitalWrite(pinLoseLED,LOW);
+      delay(100);
+      digitalWrite(pinWinLED,LOW);
+      delay(100);
       Serial.print("UserWin");
       Serial.print("\n");
     }
@@ -406,4 +406,27 @@ float normalizeML(float x0,float MaxV,float MinV)
     rtNormal=(x0-MinV)/(MaxV-MinV);
   }
   return rtNormal;
+}
+
+
+void gestureAct()
+{
+  int i=0;
+  
+  for(i=0;i<NUMBER_OF_FINGER;i++)
+  {
+    
+ //     Serial.print(servoGesture);
+ //     Serial.print("\n");
+
+      if(1==servo_nDIR[i])
+      {
+         servo_n[i].write(180-(int)servoDegree[i]);
+      }
+      else
+      {
+         servo_n[i].write((int)servoDegree[i]);   
+      }    
+  
+  }
 }
