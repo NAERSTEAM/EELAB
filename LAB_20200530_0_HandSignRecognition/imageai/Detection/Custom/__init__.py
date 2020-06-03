@@ -662,7 +662,7 @@ class CustomObjectDetection:
     def detectObjectsFromImage(self, input_image="", output_image_path="", input_type="file", output_type="file",
                                extract_detected_objects=False, minimum_percentage_probability=50, nms_treshold=0.4,
                                display_percentage_probability=True, display_object_name=True, thread_safe=False):
-        print("hello detectObjectsFromImage!!")
+
         """
 
         'detectObjectsFromImage()' function is used to detect objects observable in the given image:

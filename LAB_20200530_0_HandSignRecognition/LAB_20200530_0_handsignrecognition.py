@@ -6,6 +6,8 @@ from imageai.Detection.Custom import CustomVideoObjectDetection
 import os
 import cv2
 
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'  #Tensorflow backend be forced to use CPU for the tensorflow 1.15.0 or higher
+
 execution_path = os.getcwd()
 camera = cv2.VideoCapture(0)
 
