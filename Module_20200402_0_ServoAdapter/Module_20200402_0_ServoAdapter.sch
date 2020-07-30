@@ -693,6 +693,10 @@ In this library the device names are the same as the pin names of the symbols, t
 <text x="198.12" y="76.2" size="1.778" layer="91">1.6V  (Do not use power source from Arduino controller)
 2.GND</text>
 <text x="185.42" y="86.36" size="1.778" layer="91">6V</text>
+<text x="63.5" y="66.04" size="1.778" layer="91">To Servo0
+1.Pulse
+2.5V
+3.GND</text>
 </plain>
 <instances>
 <instance part="FRAME1" gate="G$1" x="0" y="0" smashed="yes"/>
