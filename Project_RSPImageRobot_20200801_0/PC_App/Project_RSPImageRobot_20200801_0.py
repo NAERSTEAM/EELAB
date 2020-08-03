@@ -1,7 +1,7 @@
 #Cution:This example is not supported by the officail ImageAI!!!
 #This is the examplpe for AIT test+Project_RSPImageRobot_20200801_0
 
-
+#Aug 3 2020  TI, Added audio notice for play flow 
 #AUG 1 2020, TI, Added comport writing for Arduino servo control  
 #AUG 1 2020 Based on LAB_20200530_0_HandSignRecognition
 
@@ -15,6 +15,11 @@ import random
 
 import serial 
 import serial.tools.list_ports
+
+from pygame import mixer
+
+
+
 
 UserSign=0
 matchTable=[[1,2,0],[0,1,2],[2,0,1]]
@@ -43,10 +48,12 @@ def mainLoop():
     while var == 1 :  # This constructs an infinite loop
         
         GameLoopDisplay("0_PressAnyKey.png",0)
-
-        GameLoopDisplay("1_CountDown3.png",1000)
-        GameLoopDisplay("2_CountDown2.png",1000)
-        GameLoopDisplay("3_CountDown1.png",1000)
+        mixer.init()
+        mixer.music.load('SRP_zhTW.mp3')
+        mixer.music.play()
+        GameLoopDisplay("1_CountDown3.png",700)
+        GameLoopDisplay("2_CountDown2.png",700)
+        GameLoopDisplay("3_CountDown1.png",700)
         GameLoopDisplay("4_CountDown0.png",500)
 
         MachineSign=random.randint(0,2)
