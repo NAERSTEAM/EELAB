@@ -1,6 +1,7 @@
 #Cution:This example is not supported by the officail ImageAI!!!
 #This is the examplpe for AIT test+Project_RSPImageRobot_20200801_0
 
+#Aug 3 2020  TI, Added audio notice(win and lose)  for play flow
 #Aug 3 2020  TI, Added audio notice for play flow 
 #AUG 1 2020, TI, Added comport writing for Arduino servo control  
 #AUG 1 2020 Based on LAB_20200530_0_HandSignRecognition
@@ -63,8 +64,14 @@ def mainLoop():
         
 
         if 2 == matchResult:
+            mixer.init()
+            mixer.music.load('UserWin.mp3')
+            mixer.music.play()
             GameLoopDisplay("5_YouWin.png",0)
         if 0 == matchResult:
+            mixer.init()
+            mixer.music.load('UserLose.mp3')
+            mixer.music.play()
             GameLoopDisplay("6_YouLoss.png",0)            
         cv2.destroyAllWindows()
 
