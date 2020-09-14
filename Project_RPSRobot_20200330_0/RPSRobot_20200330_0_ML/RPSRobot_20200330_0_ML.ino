@@ -1,5 +1,6 @@
 //Project RPSRobot Machine Learning version
 //================
+//Sep 14 2020 T.I. Fixed issue#17 incorrect flex direction
 //May 18 2020 T.I. Modified for the Score Board
 //Apr 16 2020 T.I. Added buzzer function
 //                   Added Preparing moving
@@ -29,13 +30,13 @@ enum GESTUREENUM {
 
 
 Servo servo_n[NUMBER_OF_FINGER]; 
-int servo_nDIR[NUMBER_OF_FINGER]={0,1,1};  
+int servo_nDIR[NUMBER_OF_FINGER]={1,0,1};  
 //servo0 0~120
 //servo1 (180-0)~(180-120)
 
 
 int ADCVal[NUMBER_OF_FINGER] = {0,0,0} ;
-int ADCVal_Cli[NUMBER_OF_FINGER]={0,-75,-66};
+int ADCVal_Cli[NUMBER_OF_FINGER]={50,-37,-30};//{0,-75,-66};
 float servoDegree[NUMBER_OF_FINGER]={0,0,0};
 
 
@@ -322,9 +323,9 @@ int gestureRecognizeML(int *pFingerADC)
   Serial.print("\n");
 
 
-  ANNinputs[0]=normalizeML((float)pFingerADC[0],240.0,208.0);
-  ANNinputs[1]=normalizeML((float)pFingerADC[1],220.0,208.0);
-  ANNinputs[2]=normalizeML((float)pFingerADC[2],220.0,208.0);
+  ANNinputs[0]=normalizeML_Neg((float)pFingerADC[0],250.0,208.0);
+  ANNinputs[1]=normalizeML_Neg((float)pFingerADC[1],250.0,208.0);
+  ANNinputs[2]=normalizeML_Neg((float)pFingerADC[2],250.0,208.0);
   
   ANNRun();
 
@@ -404,6 +405,24 @@ float normalizeML(float x0,float MaxV,float MinV)
   else
   {
     rtNormal=(x0-MinV)/(MaxV-MinV);
+  }
+  return rtNormal;
+}
+
+float normalizeML_Neg(float x0,float MaxV,float MinV)
+{
+  float rtNormal=0.0;
+  if(MaxV<=x0)
+  {
+    rtNormal= 0.0;
+  }
+  else if(MinV>=x0)
+  {
+    rtNormal=1.0;
+  }
+  else
+  {
+    rtNormal=(MaxV-x0)/(MaxV-MinV);
   }
   return rtNormal;
 }

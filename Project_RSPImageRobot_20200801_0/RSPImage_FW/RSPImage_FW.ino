@@ -1,5 +1,6 @@
 //Project_RSPImageRobot_20200801_0
 //================
+//Sep 14 2020 T.I. Added the slow mode for servo motion
 //Aug 1 2020 T.I. created this file
 
 
@@ -11,6 +12,8 @@
 
 #define NUMBER_OF_FINGER 5
 #define NUMBER_OF_GESTURE 3
+#define maximum_steps 480
+#define STEPSPERDEGREE 1
 
 enum GESTUREENUM {
     ROCK_GES,
@@ -29,7 +32,7 @@ float fingerDegree[NUMBER_OF_FINGER]={0,0,0,0,0}; //0:index ,4:thumb
 
 
 int incomingByte = 0;
-
+static int lastPos[NUMBER_OF_FINGER];
 
 void setup() {
 
@@ -45,7 +48,12 @@ void setup() {
     servo_n[2].attach(11, ZEROPOSITION, ENDPOSITION);
     servo_n[3].attach(12, ZEROPOSITION, ENDPOSITION);
     servo_n[4].attach(13, ZEROPOSITION, ENDPOSITION);
-   
+
+    lastPos[0]=0;
+    lastPos[1]=0;
+    lastPos[2]=0;
+    lastPos[3]=0;
+    lastPos[4]=0;
 
 }
 
@@ -73,18 +81,21 @@ void loop() {
     {
 
         setMotorGesture(ROCK_GES);   
-        handServosMotion();
+        //handServosMotion();
+        handServosMotionSlow();
     }
     else if('2'==incomingByte)
     {
 
         setMotorGesture(SCISSORS_GES);   
-        handServosMotion();
+        //handServosMotion();
+        handServosMotionSlow();
     }
     else if('3'==incomingByte)
     {
         setMotorGesture(PAPER_GES);   
-        handServosMotion();
+        //handServosMotion();
+        handServosMotionSlow();
       
     }
     else
@@ -119,6 +130,60 @@ void handServosMotion()
       }    
 
   }
+}
+
+
+void handServosMotionSlow()
+{
+  int i=0;
+  int j=0;
+  int posc[NUMBER_OF_FINGER];
+  
+
+ 
+  //120*4
+  for(i=0;i<maximum_steps;i++)//position commands
+  {
+     
+
+      for(j=0;j<NUMBER_OF_FINGER;j++)
+     {
+          posc[j]=lastPos[j];
+          if(fingerDegree[j]>lastPos[j])
+          {
+              if(0==(i%STEPSPERDEGREE))
+              {
+                  posc[j]=posc[j]+1;
+              }
+          }
+          else if(fingerDegree[j]<lastPos[j])
+          {
+              if(0==(i%STEPSPERDEGREE))
+              {
+                  posc[j]=posc[j]-1;
+              }
+            
+          }
+          
+          if(1==servo_nDIR[j])
+          {
+             servo_n[j].write(180-posc[j]);    
+             lastPos[j]=posc[j];
+          }
+          else
+          {
+             servo_n[j].write(posc[j]);
+             lastPos[j]=posc[j];
+          }    
+          
+
+      }
+      delay(6);
+  }//position commands
+
+  Serial.println(lastPos[0]);
+ 
+  
 }
 
 
