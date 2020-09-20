@@ -1,6 +1,8 @@
 #Cution:This example is not supported by the officail ImageAI!!!
 #This is the examplpe for AIT test+Project_RSPImageRobot_20200801_0
 
+#Sep 15 2020 TI, rename thread_Main to thread_game
+#Sep 14 2020  TI, rename mainLoop() to gameLoop
 #Aug 3 2020  TI, Added audio notice(win and lose)  for play flow
 #Aug 3 2020  TI, Added audio notice for play flow 
 #AUG 1 2020, TI, Added comport writing for Arduino servo control  
@@ -42,7 +44,8 @@ def GameLoopMotion(MotionGesture):
     outputChar=str(MotionGesture)
     ser.write(outputChar.encode())
 
-def mainLoop():
+#game flow
+def gameLoop():
     var=1
 
     global UserSign
@@ -76,7 +79,7 @@ def mainLoop():
         cv2.destroyAllWindows()
 
         
-
+#callback funtion image detector
 def per_frame_function_DataGet(counting, output_objects_array, output_objects_count,detected_frame):
 
     global UserSign
@@ -109,18 +112,27 @@ def videoLoop():
                                           return_detected_frame=True)
     
 
-comlist = serial.tools.list_ports.comports()
-connected = []
-for element in comlist:
-    connected.append(element.device)
-print("Connected COM ports: " + str(connected))
-COM_PORT = input("Port?:")
+def serialPortSetting():
+    global ser
 
-BAUD_RATES = 9600
-ser = serial.Serial(COM_PORT, BAUD_RATES)
+    comlist = serial.tools.list_ports.comports()
+    connected = []
+
+    for element in comlist:
+        connected.append(element.device)
+        
+    print("Connected COM ports: " + str(connected))
+    COM_PORT = input("Port?:")
+    
+    BAUD_RATES = 9600
+    ser = serial.Serial(COM_PORT, BAUD_RATES)
+
+#The main flow starting point
+
+serialPortSetting()
 
 thread_video=threading.Thread(target=videoLoop)
-thread_Main=threading.Thread(target=mainLoop)
+thread_game=threading.Thread(target=gameLoop)
 
 thread_video.start()
-thread_Main.start()
+thread_game.start()
